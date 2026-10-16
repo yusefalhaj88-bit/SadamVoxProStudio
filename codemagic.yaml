@@ -1,0 +1,28 @@
+publishing:
+  email:
+    recipients:
+      - sadam_vox_user@example.com # سيتم إرسال الرابط المباشر للتطبيق فوراً إلى بريدك الإلكتروني هنا كمالك للمشروع
+
+workflows:
+  android-workflow:
+    name: SADAM VOX Pro Build Workflow
+    max_build_duration: 20
+    instance_type: mac_mini_m1
+    environment:
+      flutter: stable
+      groups:
+        - replicate_keys # حزمة الصلاحيات الأمنية لمفتاحك
+    triggering:
+      events:
+        - push
+    scripts:
+      - name: Configure Owner Build Environment
+        script: |
+          echo "flutter.sdk=$FLUTTER_ROOT" > android/local.properties
+          flutter pub get
+      - name: Build Owner Authorized Android APK
+        script: |
+          flutter build apk --release --no-pub --no-validate-project
+    artifacts:
+      - build/app/outputs/flutter-apk/*.apk
+      
